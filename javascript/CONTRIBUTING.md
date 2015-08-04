@@ -10,7 +10,7 @@ Just run `make` from this directory.
 
 ### Using npm
 
-Just run `npm test` from this directory (you need to `npm test` first).
+Just run `npm test` from this directory (you need to `npm install` first).
 
 Keep in mind that this will only run unit tests. The acceptance tests are only
 run when you build with `make`.
@@ -18,3 +18,9 @@ run when you build with `make`.
 ## Browser Build
 
     make dist/gherkin.js
+
+## Make a release
+
+    npm outdated --depth 0 # See if you can upgrade anything
+    npm version NEW_VERSION -m
+    npm publish

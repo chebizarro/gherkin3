@@ -19,23 +19,23 @@ module Gherkin3
     end
 
     def match_FeatureLine(token)
-      match_title_line(token, :FeatureLine, @dialect.feature)
+      match_title_line(token, :FeatureLine, @dialect.feature_keywords)
     end
 
     def match_ScenarioLine(token)
-      match_title_line(token, :ScenarioLine, @dialect.scenario)
+      match_title_line(token, :ScenarioLine, @dialect.scenario_keywords)
     end
 
     def match_ScenarioOutlineLine(token)
-      match_title_line(token, :ScenarioOutlineLine, @dialect.scenario_outline)
+      match_title_line(token, :ScenarioOutlineLine, @dialect.scenario_outline_keywords)
     end
 
     def match_BackgroundLine(token)
-      match_title_line(token, :BackgroundLine, @dialect.background)
+      match_title_line(token, :BackgroundLine, @dialect.background_keywords)
     end
 
     def match_ExamplesLine(token)
-      match_title_line(token, :ExamplesLine, @dialect.examples)
+      match_title_line(token, :ExamplesLine, @dialect.examples_keywords)
     end
 
     def match_TableRow(token)
@@ -106,16 +106,16 @@ module Gherkin3
 
     def match_Other(token)
       text = token.line.get_line_text(@indent_to_remove) # take the entire line, except removing DocString indents
-      set_token_matched(token, :Other, text, nil, 0)
+      set_token_matched(token, :Other, unescape_docstring(text), nil, 0)
       true
     end
 
     def match_StepLine(token)
-      keywords = @dialect.given +
-                 @dialect.when +
-                 @dialect.then +
-                 @dialect.and +
-                 @dialect.but
+      keywords = @dialect.given_keywords +
+                 @dialect.when_keywords +
+                 @dialect.then_keywords +
+                 @dialect.and_keywords +
+                 @dialect.but_keywords
 
       keyword = keywords.detect { |k| token.line.start_with?(k) }
 
@@ -154,6 +154,10 @@ module Gherkin3
       token.matched_items = items
       token.location[:column] = token.matched_indent + 1
       token.matched_gherkin_dialect = @dialect_name
+    end
+
+    def unescape_docstring(text)
+      text.gsub("\\\"\\\"\\\"", "\"\"\"")
     end
   end
 end

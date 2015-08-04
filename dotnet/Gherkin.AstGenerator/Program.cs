@@ -13,6 +13,7 @@ namespace Gherkin.AstGenerator
                 return 100;
             }
 
+            var startTime = Environment.TickCount;
             foreach (var featureFilePath in args)
             {
                 try
@@ -22,11 +23,16 @@ namespace Gherkin.AstGenerator
                 }
                 catch (Exception ex)
                 {
-                    // Ideally we'd write to STDERR here, but 2> doesn't seem
-                    // to work on mono for some reason :-/
+                    // Ideally we'd use Console.Error here, but we can't because
+                    // 2> doesn't seem to work properly - at least not on Mono on OS X.
                     Console.WriteLine(ex.Message);
                     return 1;
                 }
+            }
+            var endTime = Environment.TickCount;
+            if (Environment.GetEnvironmentVariable("GHERKIN_PERF") != null)
+            {
+                Console.Error.WriteLine(endTime - startTime);
             }
             return 0;
         }

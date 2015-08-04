@@ -1,5 +1,7 @@
 # Gherkin 3
 
+[![Join the chat at https://gitter.im/cucumber/gherkin3](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cucumber/gherkin3?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Build Status](https://travis-ci.org/cucumber/gherkin3.png)](https://travis-ci.org/cucumber/gherkin3)
 
 Gherkin 3 is a parser and compiler for the Gherkin language.
@@ -14,6 +16,7 @@ Gherkin 3 is currently implemented for the following platforms:
 * JavaScript (Browser or Node.js/IO.js)
 * Ruby (MRI, JRuby or any other Ruby implementation)
 * Go
+* Python
 
 See `TODO.md` for what's remaining before we're ready to roll it out and refactor
 the Cucumber implementations to use it.
@@ -24,7 +27,6 @@ Our wish-list is (in no particular order):
 * C
 * Perl
 * PHP
-* Python
 * Rust
 * Swift
 
@@ -66,6 +68,14 @@ reader := strings.NewReader(`Feature: ...`)
 feature, err := gherkin.ParseFeature(reader)
 ```
 *Download the package via: `go get github.com/cucumber/gherkin-go`*
+
+```python
+from gherkin3.token_scanner import TokenScanner
+from gherkin3.parser import Parser
+
+parser = Parser()
+feature = parser.parse(TokenScanner("Feature: Foo"))
+```
 
 ## Why Gherkin 3?
 
@@ -124,7 +134,7 @@ Each node in the JSON representation also has a `type` property with the name
 of the node type.
 
 You can see some examples in the
-[tesdata/good](https://github.com/cucumber/gherkin3/tree/master/testdata/good)
+[testdata/good](https://github.com/cucumber/gherkin3/tree/master/testdata/good)
 directory.
 
 ### Compiler
