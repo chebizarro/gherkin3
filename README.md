@@ -18,10 +18,7 @@ Gherkin 3 is currently implemented for the following platforms:
 * Go
 * Python
 
-See `TODO.md` for what's remaining before we're ready to roll it out and refactor
-the Cucumber implementations to use it.
-
-See `CONTRIBUTING.md` if you want to contribute a parser for a new language.
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) if you want to contribute a parser for a new language.
 Our wish-list is (in no particular order):
 
 * C
@@ -34,28 +31,28 @@ Our wish-list is (in no particular order):
 
 ```java
 // Java
-Parser<Feature> parser = new Parser<>();
-Feature feature = parser.parse(gherkinDoc);
+Parser<Feature> parser = new Parser<>(new AstBuilder());
+Feature feature = parser.parse("Feature: ...");
 ```
 
 ```csharp
 // C#
 var parser = new Parser();
-var feature = parser.Parse(gherkinDoc);
+var feature = parser.Parse("Feature: ...");
 ```
 
 ```ruby
 # Ruby
-require 'gherkin3'
+require 'gherkin3/parser'
 parser = Gherkin3::Parser.new
-feature = parser.parse(gherkin_doc)
+feature = parser.parse("Feature: ...")
 ```
 
 ```javascript
 // JavaScript
 var Gherkin = require('gherkin');
 var parser = new Gherkin.Parser();
-var feature = parser.parse(gherkinDoc);
+var feature = parser.parse("Feature: ...");
 ```
 
 ```go
@@ -70,12 +67,18 @@ feature, err := gherkin.ParseFeature(reader)
 *Download the package via: `go get github.com/cucumber/gherkin-go`*
 
 ```python
-from gherkin3.token_scanner import TokenScanner
+# Python
 from gherkin3.parser import Parser
 
 parser = Parser()
-feature = parser.parse(TokenScanner("Feature: Foo"))
+feature = parser.parse("Feature: ...")
 ```
+
+## Table cell escaping
+
+If you want to use a newline character in a table cell, you can write this
+as `\n`. If you need a '|' as part of the cell, you can escape it as `\|`. And
+finally, if you need a '\', you can escape that with `\\`.
 
 ## Why Gherkin 3?
 
@@ -247,4 +250,4 @@ The various compilers producing pickles might move to a separate project too.
 
 ## Building Gherkin 3
 
-See `CONTRIBUTING.md`
+See [`CONTRIBUTING.md`](CONTRIBUTING.md)

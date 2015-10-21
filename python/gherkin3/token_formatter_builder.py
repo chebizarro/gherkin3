@@ -3,6 +3,9 @@ from .ast_builder import AstBuilder
 
 class TokenFormatterBuilder(AstBuilder):
     def __init__(self):
+        self.reset()
+
+    def reset(self):
         self._tokens = []
 
     def build(self, token):
@@ -21,9 +24,16 @@ class TokenFormatterBuilder(AstBuilder):
         if token.eof():
             return "EOF"
 
-        return ('(' + str(token.location['line']) + ':' + str(token.location['column']) + ')' +
-                token.matched_type + ':' +
-                (token.matched_keyword if token.matched_keyword else "") + '/' +
-                (token.matched_text if token.matched_text else "") + '/' +
-                ','.join([str(item['column']) + ':' + item['text'] for item in
-                          token.matched_items]))
+        return ''.join([
+            '(', 
+            str(token.location['line']), ':', str(token.location['column']), 
+            ')',
+            token.matched_type, 
+            ':', 
+            (token.matched_keyword if token.matched_keyword else ''),
+            '/', 
+            (token.matched_text if token.matched_text else ""),
+            '/',
+            ','.join([str(item['column']) + ':' + item['text'] for item in token.matched_items])
+        ])
+

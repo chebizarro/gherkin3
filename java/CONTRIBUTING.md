@@ -2,11 +2,13 @@ Please read [CONTRIBUTING](https://github.com/cucumber/gherkin3/blob/master/CONT
 You should clone the [cucumber/gherkin3](https://github.com/cucumber/gherkin3) repo if you want
 to contribute.
 
-## Using make
+## Run tests
+
+### Using make
 
 Just run `make` from this directory.
 
-## Using just Maven
+### Using just Maven
 
 Just run `mvn clean test` from this directory.
 
@@ -15,7 +17,7 @@ run when you build with `make`.
 
 ## Make a release
 
-    # TODO: Use the maven release plugin
-
-    # Change version in `pom.xml`
-    mvn -Psign clean source:jar javadoc:jar deploy
+    # Verify that version in `pom.xml` has the right SNAPSHOT release
+    mvn release:clean
+  	mvn --batch-mode -P release-sign-artifacts release:prepare -DdevelopmentVersion=X.Y.Z+1-SNAPSHOT
+  	mvn --batch-mode -P release-sign-artifacts release:perform

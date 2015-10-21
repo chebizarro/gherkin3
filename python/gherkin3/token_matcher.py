@@ -3,43 +3,49 @@ from .dialect import Dialect
 from .errors import NoSuchLanguageException
 
 
-class TokenMatcher:
+class TokenMatcher(object):
     LANGUAGE_RE = re.compile(r"^\s*#\s*language\s*:\s*([a-zA-Z\-_]+)\s*$")
 
     def __init__(self, dialect_name='en'):
+        self._default_dialect_name = dialect_name
         self._change_dialect(dialect_name)
+        self.reset()
+
+    def reset(self):
+        if self.dialect_name != self._default_dialect_name:
+            self._change_dialect(self._default_dialect_name)
         self._indent_to_remove = 0
         self._active_doc_string_separator = None
 
     def match_FeatureLine(self, token):
-        return self._match_title_line(token, 'FeatureLine', self.dialect.feature_keywords())
+        return self._match_title_line(token, 'FeatureLine', self.dialect.feature_keywords)
 
     def match_ScenarioLine(self, token):
-        return self._match_title_line(token, 'ScenarioLine', self.dialect.scenario_keywords())
+        return self._match_title_line(token, 'ScenarioLine', self.dialect.scenario_keywords)
 
     def match_ScenarioOutlineLine(self, token):
         return self._match_title_line(token, 'ScenarioOutlineLine',
-                                      self.dialect.scenario_outline_keywords())
+                                      self.dialect.scenario_outline_keywords)
 
     def match_BackgroundLine(self, token):
-        return self._match_title_line(token, 'BackgroundLine', self.dialect.background_keywords())
+        return self._match_title_line(token, 'BackgroundLine', self.dialect.background_keywords)
 
     def match_ExamplesLine(self, token):
-        return self._match_title_line(token, 'ExamplesLine', self.dialect.examples_keywords())
+        return self._match_title_line(token, 'ExamplesLine', self.dialect.examples_keywords)
 
     def match_TableRow(self, token):
         if not token.line.startswith('|'):
             return False
         # TODO: indent
-        self._set_token_matched(token, 'TableRow', items=token.line.table_cells())
+        self._set_token_matched(token, 'TableRow', items=token.line.table_cells)
         return True
 
     def match_StepLine(self, token):
-        keywords = (self.dialect.given_keywords() +
-                    self.dialect.when_keywords() +
-                    self.dialect.then_keywords() +
-                    self.dialect.and_keywords() +
-                    self.dialect.but_keywords())
+        keywords = (self.dialect.given_keywords +
+                    self.dialect.when_keywords +
+                    self.dialect.then_keywords +
+                    self.dialect.and_keywords +
+                    self.dialect.but_keywords)
         for keyword in (k for k in keywords if token.line.startswith(k)):
             title = token.line.get_rest_trimmed(len(keyword))
             self._set_token_matched(token, 'StepLine', title, keyword)
@@ -76,7 +82,7 @@ class TokenMatcher:
         if not token.line.startswith('@'):
             return False
 
-        self._set_token_matched(token, 'TagLine', items=token.line.tags())
+        self._set_token_matched(token, 'TagLine', items=token.line.tags)
         return True
 
     def match_DocStringSeparator(self, token):
@@ -126,7 +132,9 @@ class TokenMatcher:
         return False
 
     def _set_token_matched(self, token, matched_type, text=None,
-                           keyword=None, indent=None, items=[]):
+                           keyword=None, indent=None, items=None):
+        if items is None:
+            items = []
         token.matched_type = matched_type
         token.matched_text = text.rstrip('\r\n') if text is not None else None  # text == '' should not result in None
         token.matched_keyword = keyword

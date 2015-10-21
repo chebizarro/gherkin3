@@ -1,4 +1,4 @@
-class GherkinLine:
+class GherkinLine(object):
     def __init__(self, line_text, line_number):
         self._line_text = line_text
         self._line_number = line_number
@@ -23,16 +23,50 @@ class GherkinLine:
     def startswith_title_keyword(self, keyword):
         return self._trimmed_line_text.startswith(keyword + ':')
 
+    @property
     def table_cells(self):
-        column = self.indent + 1
-        items = self._trimmed_line_text.strip().split('|')
         cells = []
-        for item in items[1:-1]:
-            cell_indent = len(item) - len(item.lstrip()) + 1
-            cells.append({'column': column + cell_indent, 'text': item.strip()})
-            column += len(item) + 1
+        for cell, col in self.split_table_cells(self._trimmed_line_text.strip()):
+            cell_indent = len(cell) - len(cell.lstrip())
+            cells.append({'column': col + self.indent + cell_indent, 'text': cell.strip()})
         return cells
 
+    def split_table_cells(self, row):
+        """
+        An iterator returning all the table cells in a row with their positions,
+        accounting for escaping.
+        """
+
+        row = iter(row)
+        col = 0
+        start_col = col + 1
+        cell = ''
+        first_cell = True
+        while True:
+            char = next(row, None)
+            col += 1
+            if char == '|':
+                if first_cell:
+                    # First cell (content before the first |) is skipped
+                    first_cell = False
+                else:
+                    yield (cell, start_col)
+                cell = ''
+                start_col = col + 1
+            elif char == '\\':
+                char = next(row)
+                col += 1
+                if char == 'n':
+                    cell += '\n'
+                else:
+                    cell += char
+            elif char:
+                cell += char
+            else:
+                break
+        # Last cell (content after the last |) is skipped
+
+    @property
     def tags(self):
         column = self.indent + 1
         items = self._trimmed_line_text.strip().split('@')

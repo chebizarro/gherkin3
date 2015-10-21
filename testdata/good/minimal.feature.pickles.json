@@ -1,17 +1,19 @@
 [
   {
-    "name": "Scenario: minimalistic",
-    "source": [
+    "locations": [
       {
         "column": 3,
         "line": 3
       }
     ],
+    "name": "Scenario: minimalistic",
+    "path": "../testdata/good/minimal.feature",
     "steps": [
       {
-        "source": [
+        "arguments": [],
+        "locations": [
           {
-            "column": 5,
+            "column": 11,
             "line": 4
           }
         ],
